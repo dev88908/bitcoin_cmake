@@ -158,7 +158,7 @@ public:
 
 inline string i64tostr(int64 n)
 {
-    return strprintf("%"PRId64, n);
+    return strprintf("%" PRId64, n);
 }
 
 inline string itostr(int n)

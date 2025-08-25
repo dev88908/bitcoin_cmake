@@ -51,13 +51,13 @@ void CheckForShutdown(int n);
 // The message start string is designed to be unlikely to occur in normal data.
 // The characters are rarely used upper ascii, not valid as UTF-8, and produce
 // a large 4-byte int at any alignment.
-static const char pchMessageStart[4] = { 0xf9, 0xbe, 0xb4, 0xd9 };
+static const unsigned char pchMessageStart[4] = { 0xf9, 0xbe, 0xb4, 0xd9 };
 
 class CMessageHeader
 {
 public:
     enum { COMMAND_SIZE=12 };
-    char pchMessageStart[sizeof(::pchMessageStart)];
+    unsigned char pchMessageStart[sizeof(::pchMessageStart)];
     char pchCommand[COMMAND_SIZE];
     unsigned int nMessageSize;
 
@@ -239,11 +239,12 @@ public:
         ss.reserve(18);
         ss << FLATDATA(pchReserved) << ip << port;
 
-        #if defined(_MSC_VER) && _MSC_VER < 1300
-        return vector<unsigned char>((unsigned char*)&ss.begin()[0], (unsigned char*)&ss.end()[0]);
-        #else
-        return vector<unsigned char>(ss.begin(), ss.end());
-        #endif
+        // 现代C++兼容的方式
+        if (ss.empty()) {
+            return vector<unsigned char>();
+        } else {
+            return vector<unsigned char>(ss.begin(), ss.end());
+        }
     }
 
     struct sockaddr_in GetSockAddr() const
@@ -416,15 +417,15 @@ extern uint64 nLocalServices;
 extern CAddress addrLocalHost;
 extern CNode* pnodeLocalHost;
 extern bool fShutdown;
-extern array<bool, 10> vfThreadRunning;
-extern vector<CNode*> vNodes;
+extern boost::array<bool, 10> vfThreadRunning;
+extern std::vector<CNode*> vNodes;
 extern CCriticalSection cs_vNodes;
-extern map<vector<unsigned char>, CAddress> mapAddresses;
+extern std::map<std::vector<unsigned char>, CAddress> mapAddresses;
 extern CCriticalSection cs_mapAddresses;
-extern map<CInv, CDataStream> mapRelay;
-extern deque<pair<int64, CInv> > vRelayExpiration;
+extern std::map<CInv, CDataStream> mapRelay;
+extern std::deque<std::pair<int64, CInv> > vRelayExpiration;
 extern CCriticalSection cs_mapRelay;
-extern map<CInv, int64> mapAlreadyAskedFor;
+extern std::map<CInv, int64> mapAlreadyAskedFor;
 extern CAddress addrProxy;
 
 

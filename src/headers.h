@@ -2,38 +2,49 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file license.txt or http://www.opensource.org/licenses/mit-license.php.
 
+// 编译器特定设置
 #ifdef _MSC_VER
 #pragma warning(disable:4786)
 #pragma warning(disable:4804)
 #pragma warning(disable:4717)
 #endif
-#ifdef _WIN32_WINNT
-#undef _WIN32_WINNT
+
+// 平台特定设置
+#ifdef WIN32
+    #ifdef _WIN32_WINNT
+    #undef _WIN32_WINNT
+    #endif
+    #define _WIN32_WINNT 0x0400
+    #define WIN32_LEAN_AND_MEAN 1
 #endif
-#define _WIN32_WINNT 0x0400
-#define WIN32_LEAN_AND_MEAN 1
+
+// wxWidgets 头文件
 #include <wx/wx.h>
 #include <wx/clipbrd.h>
 #include <wx/snglinst.h>
+
+// OpenSSL 头文件
 #include <openssl/ecdsa.h>
 #include <openssl/evp.h>
 #include <openssl/rand.h>
 #include <openssl/sha.h>
 #include <openssl/ripemd.h>
-#include <windows.h>
-#include <winsock2.h>
-#include <mswsock.h>
+
+// 标准C/C++头文件
 #include <stdio.h>
 #include <stdlib.h>
-#include <io.h>
 #include <math.h>
 #include <limits.h>
 #include <float.h>
 #include <assert.h>
-#include <process.h>
-#include <malloc.h>
 #include <memory>
+
+// 平台兼容性头文件 - 必须在其他系统头文件之前包含
+#include "compat.h"
+
 #define BOUNDSCHECK 1
+
+// STL 头文件
 #include <sstream>
 #include <string>
 #include <vector>
@@ -43,13 +54,19 @@
 #include <set>
 #include <algorithm>
 #include <numeric>
+
+// Boost 头文件
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/tuple/tuple_comparison.hpp>
 #include <boost/tuple/tuple_io.hpp>
 #include <boost/array.hpp>
+
+#ifdef _MSC_VER
 #pragma hdrstop
+#endif
+
 using namespace std;
 using namespace boost;
 

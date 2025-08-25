@@ -1,0 +1,73 @@
+# Bitcoin Unix/Linux/macOS Makefile
+# 作为CMake的简单替代方案
+
+CXX = g++
+CXXFLAGS = -std=c++11 -O2 -Wall -Wno-invalid-offsetof -Wformat
+
+# 平台检测
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+    # macOS
+    PLATFORM_LIBS = -framework CoreFoundation -framework Security
+    CXXFLAGS += -I/usr/local/opt/openssl/include -I/usr/local/opt/boost/include
+    LDFLAGS += -L/usr/local/opt/openssl/lib -L/usr/local/opt/boost/lib
+else
+    # Linux
+    PLATFORM_LIBS = -ldl
+endif
+
+# 包含路径
+INCLUDES = -Isrc
+
+# 库
+LIBS = -lwx_gtk3u_richtext-3.0 -lwx_gtk3u_html-3.0 -lwx_gtk3u_core-3.0 -lwx_baseu-3.0 \
+       -lssl -lcrypto -ldb_cxx -lboost_system -lboost_filesystem -lboost_thread \
+       -lpthread $(PLATFORM_LIBS)
+
+# 源文件
+SOURCES = src/main.cpp src/util.cpp src/script.cpp src/db.cpp src/net.cpp \
+          src/market.cpp src/ui.cpp src/uibase.cpp src/sha.cpp src/irc.cpp
+
+# 目标文件
+OBJECTS = $(SOURCES:.cpp=.o)
+
+# 目标
+TARGET = bitcoin
+
+.PHONY: all clean test
+
+all: $(TARGET)
+
+$(TARGET): $(OBJECTS)
+	$(CXX) $(LDFLAGS) -o $@ $^ $(LIBS)
+
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+clean:
+	rm -f $(OBJECTS) $(TARGET) test_compatibility test_util test_headers test_fix
+
+test: test_compatibility test_util test_headers test_fix
+	./test_compatibility
+	./test_util
+	./test_headers
+	./test_fix
+
+test_compatibility: test_compatibility.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(PLATFORM_LIBS) -lpthread
+
+
+
+test_util: test_util.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(PLATFORM_LIBS) -lpthread
+
+test_headers: test_headers.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(PLATFORM_LIBS) -lpthread
+
+test_fix: test_fix.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(PLATFORM_LIBS) -lpthread
+
+install: $(TARGET)
+	install -m 755 $(TARGET) /usr/local/bin/
+
+.SUFFIXES: .cpp .o

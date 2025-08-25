@@ -459,7 +459,7 @@ void Unserialize_impl(Stream& is, std::vector<T, A>& v, int nType, int nVersion,
     unsigned int i = 0;
     while (i < nSize)
     {
-        unsigned int blk = min(nSize - i, 1 + 4999999 / sizeof(T));
+        unsigned int blk = min(nSize - i, static_cast<unsigned int>(1 + 4999999 / sizeof(T)));
         v.resize(i + blk);
         is.read((char*)&v[i], blk * sizeof(T));
         i += blk;
@@ -742,9 +742,13 @@ public:
         Init(nTypeIn, nVersionIn);
     }
 
-    CDataStream(const vector<unsigned char>& vchIn, int nTypeIn=0, int nVersionIn=VERSION) : vch((char*)&vchIn.begin()[0], (char*)&vchIn.end()[0])
+    CDataStream(const vector<unsigned char>& vchIn, int nTypeIn=0, int nVersionIn=VERSION)
     {
         Init(nTypeIn, nVersionIn);
+        if (!vchIn.empty()) {
+            vch.assign(reinterpret_cast<const char*>(&vchIn[0]), 
+                      reinterpret_cast<const char*>(&vchIn[0] + vchIn.size()));
+        }
     }
 
     void Init(int nTypeIn=0, int nVersionIn=VERSION)
@@ -807,7 +811,8 @@ public:
 #if !defined(_MSC_VER) || _MSC_VER >= 1300
     void insert(iterator it, const char* first, const char* last)
     {
-        insert(it, (const_iterator)first, (const_iterator)last);
+        // 不能直接转换指针为迭代器，需要使用vector的insert方法
+        vch.insert(it, first, last);
     }
 #endif
 

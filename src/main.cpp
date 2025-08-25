@@ -1691,7 +1691,7 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
 {
     static map<unsigned int, vector<unsigned char> > mapReuseKey;
     printf("received: %-12s (%d bytes)  ", strCommand.c_str(), vRecv.size());
-    for (int i = 0; i < min(vRecv.size(), (unsigned int)25); i++)
+    for (int i = 0; i < min(vRecv.size(), static_cast<size_t>(25)); i++)
         printf("%02x ", vRecv[i] & 0xff);
     printf("\n");
     if (nDropMessagesTest > 0 && GetRand(nDropMessagesTest) == 0)
@@ -1714,8 +1714,8 @@ bool ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         if (pfrom->nVersion == 0)
             return false;
 
-        pfrom->vSend.SetVersion(min(pfrom->nVersion, VERSION));
-        pfrom->vRecv.SetVersion(min(pfrom->nVersion, VERSION));
+        pfrom->vSend.SetVersion(min(pfrom->nVersion, static_cast<int>(VERSION)));
+        pfrom->vRecv.SetVersion(min(pfrom->nVersion, static_cast<int>(VERSION)));
 
         pfrom->fClient = !(pfrom->nServices & NODE_NETWORK);
         if (pfrom->fClient)

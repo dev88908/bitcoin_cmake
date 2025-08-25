@@ -3,7 +3,6 @@
 // file license.txt or http://www.opensource.org/licenses/mit-license.php.
 
 #include "headers.h"
-#include <winsock2.h>
 
 void ThreadMessageHandler2(void* parg);
 void ThreadSocketHandler2(void* parg);
@@ -23,7 +22,7 @@ CAddress addrLocalHost(0, DEFAULT_PORT, nLocalServices);
 CNode nodeLocalHost(INVALID_SOCKET, CAddress("127.0.0.1", nLocalServices));
 CNode* pnodeLocalHost = &nodeLocalHost;
 bool fShutdown = false;
-array<bool, 10> vfThreadRunning;
+boost::array<bool, 10> vfThreadRunning;
 vector<CNode*> vNodes;
 CCriticalSection cs_vNodes;
 map<vector<unsigned char>, CAddress> mapAddresses;
@@ -573,7 +572,7 @@ void ThreadSocketHandler2(void* parg)
         if (FD_ISSET(hListenSocket, &fdsetRecv))
         {
             struct sockaddr_in sockaddr;
-            int len = sizeof(sockaddr);
+            socklen_t len = sizeof(sockaddr);
             SOCKET hSocket = accept(hListenSocket, (struct sockaddr*)&sockaddr, &len);
             CAddress addr(sockaddr);
             if (hSocket == INVALID_SOCKET)
@@ -617,7 +616,7 @@ void ThreadSocketHandler2(void* parg)
                     const unsigned int nBufSize = 0x10000;
                     vRecv.resize(nPos + nBufSize);
                     int nBytes = recv(hSocket, &vRecv[nPos], nBufSize, 0);
-                    vRecv.resize(nPos + max(nBytes, 0));
+                    vRecv.resize(nPos + max(nBytes, static_cast<int>(0)));
                     if (nBytes == 0)
                     {
                         // socket closed gracefully
@@ -970,7 +969,7 @@ bool StartNode(string& strError)
     // IP address, and port for the socket that is being bound
     int nRetryLimit = 15;
     struct sockaddr_in sockaddr = addrLocalHost.GetSockAddr();
-    if (bind(hListenSocket, (struct sockaddr*)&sockaddr, sizeof(sockaddr)) == SOCKET_ERROR)
+    if (::bind(hListenSocket, (struct sockaddr*)&sockaddr, sizeof(sockaddr)) == SOCKET_ERROR)
     {
         int nErr = WSAGetLastError();
         if (nErr == WSAEADDRINUSE)
