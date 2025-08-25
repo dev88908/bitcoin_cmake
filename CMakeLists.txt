@@ -73,6 +73,7 @@ set(BITCOIN_SOURCES
     src/market.cpp
     src/sha.cpp
     src/irc.cpp
+    src/stubs.cpp
 )
 
 # 头文件列表
@@ -144,8 +145,13 @@ endif()
 
 # 安装规则
 install(TARGETS bitcoin
-    RUNTIME DESTINATION bin
+    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
 )
+
+# Set default install prefix to user's home directory if not specified
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/install" CACHE PATH "Install prefix" FORCE)
+endif()
 
 # 打印配置信息
 message(STATUS "Bitcoin build configuration:")
