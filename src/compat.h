@@ -238,6 +238,11 @@
     // 字符串比较函数
     #define stricmp strcasecmp
     
+    // 格式化字符串兼容性 - Windows使用%I64d，Unix使用%lld
+    #define PRId64 "lld"
+    #define PRIu64 "llu"
+    #define PRIx64 "llx"
+    
     // Windows 网络函数
     #define FIONBIO 0x8004667e
     #define NO_ERROR 0

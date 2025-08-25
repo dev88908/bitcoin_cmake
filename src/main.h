@@ -338,7 +338,7 @@ public:
     {
         if (scriptPubKey.size() < 6)
             return "CTxOut(error)";
-        return strprintf("CTxOut(nValue=%I64d.%08I64d, scriptPubKey=%s)", nValue / COIN, nValue % COIN, scriptPubKey.ToString().substr(0,24).c_str());
+        return strprintf("CTxOut(nValue=%lld.%08lld, scriptPubKey=%s)", (long long)(nValue / COIN), (long long)(nValue % COIN), scriptPubKey.ToString().substr(0,24).c_str());
     }
 
     void print() const

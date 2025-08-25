@@ -2401,7 +2401,7 @@ int64 GetBalance()
     }
 
     QueryPerformanceCounter((LARGE_INTEGER*)&nEnd);
-    ///printf(" GetBalance() time = %16I64d\n", nEnd - nStart);
+    ///printf(" GetBalance() time = %16lld\n", (long long)(nEnd - nStart));
     return nTotal;
 }
 

@@ -575,7 +575,7 @@ bool CWalletDB::LoadWallet(vector<unsigned char>& vchDefaultKeyRet)
     }
 
     printf("fGenerateBitcoins = %d\n", fGenerateBitcoins);
-    printf("nTransactionFee = %I64d\n", nTransactionFee);
+    printf("nTransactionFee = %lld\n", (long long)nTransactionFee);
     printf("addrIncoming = %s\n", addrIncoming.ToString().c_str());
 
     return true;

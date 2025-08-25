@@ -210,7 +210,7 @@ void ParseString(const string& str, char c, vector<string>& v)
 string FormatMoney(int64 n, bool fPlus)
 {
     n /= CENT;
-    string str = strprintf("%I64d.%02I64d", (n > 0 ? n : -n)/100, (n > 0 ? n : -n)%100);
+    string str = strprintf("%lld.%02lld", (long long)((n > 0 ? n : -n)/100), (long long)((n > 0 ? n : -n)%100));
     for (int i = 6; i < str.size(); i += 4)
         if (isdigit(str[str.size() - i - 1]))
             str.insert(str.size() - i, 1, ',');
