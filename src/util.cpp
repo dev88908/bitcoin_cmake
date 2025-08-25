@@ -59,6 +59,7 @@ void RandAddSeed(bool fPerfmon)
     // Seed with CPU performance counter
     LARGE_INTEGER PerformanceCount;
     QueryPerformanceCounter(&PerformanceCount);
+    printf("RandAddSeed======%ld\n", PerformanceCount);
     RAND_add(&PerformanceCount, sizeof(PerformanceCount), 1.5);
     memset(&PerformanceCount, 0, sizeof(PerformanceCount));
 

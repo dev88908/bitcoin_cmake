@@ -63,7 +63,7 @@ bool AppInit(int argc, char* argv[])
         strErrors += "Error loading wallet.dat\n";
     
     printf("Done loading\n");
-    
+        
     if (!strErrors.empty())
     {
         printf("Errors during initialization:\n%s", strErrors.c_str());
